@@ -14,7 +14,6 @@ float delta;
 int RADIUS = 5;
 
 size_t nthreads;
-pthread_mutex_t lock;
 
 float MAX_START_SPEED = 50;
 
@@ -27,8 +26,6 @@ size_t MAX_FPS = 180;
 size_t NUMBER_OF_BALLS = 100;
 struct Ball* balls;
 
-struct Ball* new_balls;
-
 struct Ball {
   Vector2 pos;
   Vector2 vel;
@@ -37,6 +34,7 @@ struct Ball {
 
 struct ThreadParam {
   size_t i;
+  struct Ball* ball_list;
 };
 
 
@@ -101,61 +99,50 @@ void create_balls() {
 
 
 void* collide(void* param) {
-  size_t i = ((struct ThreadParam*) param)->i;
+  size_t index = ((struct ThreadParam*) param)->i;
+  struct Ball* list = ((struct ThreadParam*) param)->ball_list;
 
-  int balls_over_threads = NUMBER_OF_BALLS/nthreads;
+  size_t balls_over_threads = NUMBER_OF_BALLS/nthreads;
 
-  size_t ball_end;
-
-  size_t ball_start = i * balls_over_threads;
-  if (i+1 == nthreads) {
+  if (index+1 == nthreads) {
     balls_over_threads = NUMBER_OF_BALLS % nthreads;
-    ball_end = NUMBER_OF_BALLS;
   }
   else{
-    ball_end = (i+1) * balls_over_threads;
+    balls_over_threads = NUMBER_OF_BALLS/nthreads;
   }
 
-  for (size_t k=ball_start; k<=ball_end; k++) {
+  for (size_t i=0; i<balls_over_threads; i++) {
     for (size_t j=0; j<NUMBER_OF_BALLS; j++) {
-      if (j != k) {
-        float d = Vector2Distance(new_balls[k].pos, balls[j].pos);
-        Vector2 t = Vector2Scale(Vector2Normalize(Vector2Subtract(new_balls[k].pos, balls[j].pos)), delta*REPULTION*(twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/d);
-        new_balls[k].vel = Vector2Add(new_balls[k].vel, t);
+      float d = Vector2Distance(list[i].pos, balls[j].pos);
+      if (d != 0) {
+        Vector2 t = Vector2Scale(Vector2Normalize(Vector2Subtract(list[i].pos, balls[j].pos)), delta*REPULTION*(twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/d);
+        list[i].vel = Vector2Add(list[i].vel, t);
       }
     }
-    new_balls[k].pos.x += delta*balls[k].vel.x;
-    new_balls[k].pos.y += delta*balls[k].vel.y;
+    list[i].pos.x += delta*list[i].vel.x;
+    list[i].pos.y += delta*list[i].vel.y;
         
-    new_balls[k].vel.y += delta*G/2;
+    list[i].vel.y += delta*G/2;
 
-    if (balls[k].pos.x > WW - RADIUS) {
-      new_balls[k].pos.x = WW - RADIUS;
-      new_balls[k].vel.x = -new_balls[k].vel.x;
+    if (list[i].pos.x > WW - RADIUS) {
+      list[i].pos.x = WW - RADIUS;
+      list[i].vel.x = -list[i].vel.x;
     }
-    if (balls[k].pos.x < RADIUS) {
-      new_balls[k].pos.x = RADIUS;
-      new_balls[k].vel.x = -new_balls[k].vel.x;
+    if (list[i].pos.x < RADIUS) {
+      list[i].pos.x = RADIUS;
+      list[i].vel.x = -list[i].vel.x;
     }
 
-    if (balls[k].pos.y > WH - RADIUS) {
-      new_balls[k].vel.y = -new_balls[k].vel.y;
-      new_balls[k].pos.y = WH - RADIUS;
+    if (list[i].pos.y > WH - RADIUS) {
+      list[i].vel.y = -list[i].vel.y;
+      list[i].pos.y = WH - RADIUS;
     }
-    if (balls[k].pos.y < RADIUS) {
-      new_balls[k].vel.y = -new_balls[k].vel.y;
-      new_balls[k].pos.y = RADIUS;
+    if (list[i].pos.y < RADIUS) {
+      list[i].vel.y = -list[i].vel.y;
+      list[i].pos.y = RADIUS;
     }
   }
 
-  pthread_mutex_lock(&lock);
-    for (size_t k=ball_start; k<ball_end; k++) {
-      balls[k].vel.x = new_balls[k].vel.x;
-      balls[k].vel.y = new_balls[k].vel.y;
-      balls[k].pos.x = new_balls[k].pos.x;
-      balls[k].pos.y = new_balls[k].pos.y;
-    }
-  pthread_mutex_unlock(&lock);
   return NULL;
 }
 
@@ -163,14 +150,15 @@ void* collide(void* param) {
 int main() {
   read_config();
   InitWindow(WW, WH, "Simulation");
-  balls = malloc(NUMBER_OF_BALLS * sizeof(struct Ball));
-  new_balls = malloc(NUMBER_OF_BALLS * sizeof(struct Ball));
   SetTargetFPS(MAX_FPS);
+
+  balls = malloc(NUMBER_OF_BALLS * sizeof(struct Ball));
+  struct Ball new_balls[NUMBER_OF_BALLS];
+
   nthreads = sysconf(_SC_NPROCESSORS_ONLN);
   struct ThreadParam paramethers[nthreads];
 
   pthread_t threads[nthreads];
-  pthread_mutex_init(&lock, NULL);
 
 	create_balls();
   for (size_t i=0; i<NUMBER_OF_BALLS; i++) {
@@ -184,8 +172,13 @@ int main() {
     delta = GetFrameTime();
 
     for (size_t i=0; i<nthreads; i++) {
-      paramethers[i] = (struct ThreadParam) {i};
-      if (pthread_create(&(threads[i]), NULL, collide, paramethers + i) != 0) {
+      paramethers[i].i = i;
+      int balls_over_threads;
+      if (i == nthreads) balls_over_threads = NUMBER_OF_BALLS%nthreads;
+      else balls_over_threads = NUMBER_OF_BALLS/nthreads;
+
+      paramethers[i].ball_list = &(new_balls[balls_over_threads*i]);
+      if (pthread_create(&(threads[i]), NULL, collide, &(paramethers[i])) != 0) {
         perror("Didn`t create thread");
         return 1;
       }
@@ -197,16 +190,15 @@ int main() {
     BeginDrawing();
       ClearBackground(BLACK);
       for (size_t i=0; i<NUMBER_OF_BALLS; i++) {
+        balls[i].vel.x = new_balls[i].vel.x;
+        balls[i].vel.y = new_balls[i].vel.y;
+        balls[i].pos.x = new_balls[i].pos.x;
+        balls[i].pos.y = new_balls[i].pos.y;
         DrawCircle(balls[i].pos.x, balls[i].pos.y, RADIUS, RED);
-        new_balls[i].vel.x = balls[i].vel.x;
-        new_balls[i].vel.y = balls[i].vel.y;
-        new_balls[i].pos.x = balls[i].pos.x;
-        new_balls[i].pos.y = balls[i].pos.y;
       }
       DrawFPS(0, 0);
     EndDrawing();
   }
-  pthread_mutex_destroy(&lock);
   free(balls);
 
   return 0;
