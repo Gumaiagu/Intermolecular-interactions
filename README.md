@@ -10,18 +10,16 @@ Simple! Just run `make` on UNIX like systems.
 
 For now, there're only 6 fields:
 
-* WW -> Window Width
-* WH -> Window Height
-* GR -> Gravity acceleration
-* NB -> Number of balls
-* RE -> Repultion force
-* MS -> Maximum initial Speed (on each axis)
+* WW -> Window Width (int)
+* WH -> Window Height (int)
+* GRAVITY -> Gravitational acceleration (float)
+* NUMBER_OF_BALLS -> Number of balls (int)
+* REPULTION -> Repultion force (float)
+* MAX_START_SPEED -> Maximum initial Speed (on each axis) (float)
 
-For now, only variables with one line are possible.
+Now variable names can have many characters.
 
 The config format is like CSS code style:
 ```config
 WW: {random number}
-#  ^
-# Use this space!!! (Also, comments can lead to erros)
 ```
