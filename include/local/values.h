@@ -1,15 +1,20 @@
 #pragma once
 #include <raylib.h>   // Defines Vector2
-#include <stddef.h>
+#include <stddef.h>   // Defines size_t
+#include <limits.h>
+
+#define ON_ERROR(message) do {if (errno != 0) {perror(message); return errno;}}while(0)
 
 int WW = 800;
-int WH = 500;
+int WH = 800;
 
 float delta;
 
+float change = 0.01;
+
 int RADIUS = 5;
 
-size_t nthreads;
+size_t nthreads = INT_MAX;
 
 float MAX_START_SPEED = 50;
 
@@ -36,5 +41,3 @@ struct ThreadParam {
 
 #define sixth(x) x*x*x*x*x*x
 #define twelve(x) sixth(x)*sixth(x)
-
-

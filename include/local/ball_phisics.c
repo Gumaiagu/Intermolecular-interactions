@@ -6,11 +6,16 @@
 #include <raymath.h>
 
 
+double formula(double d) {
+  return delta*REPULTION*(2*twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/d;
+}
+
+
 void intermolecular_forces(struct Ball* ball) {
   for (size_t j=0; j<NUMBER_OF_BALLS; j++) {
-    float d = Vector2Distance(ball->pos, balls[j].pos);
+    double d = Vector2Distance(ball->pos, balls[j].pos);
     if (d != 0) {
-      ball->vel = Vector2Add(ball->vel, Vector2Scale(Vector2Normalize(Vector2Subtract(ball->pos, balls[j].pos)), delta*REPULTION*(2*twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/d));
+      ball->vel = Vector2Add(ball->vel, Vector2Scale(Vector2Normalize(Vector2Subtract(ball->pos, balls[j].pos)), formula(d)));
     }
   }
 }

@@ -4,13 +4,19 @@
 #include <string.h> // String managing tools
 #include <ctype.h>  // Managing types
 
+#include <errno.h>
+
+#ifndef __unix__
+#include "windows_stuff.c"  // GNU functions, but for windows
+#endif
+
 #include "local/values.h"   // My header
 
 
-void strip_left(char **__restrict string) {
+void strip_left(char** string) {
   while (1) {
-    if ((*(string)[0] == '\0') | !isblank(*(string)[0])) break;
-    string++;
+    if (((*string)[0] == '\0') | !isblank((*string)[0])) break;
+    (*string)++;
   }
 }
 
@@ -34,15 +40,15 @@ void check_value(const char *__restrict name, const char *__restrict line) {
   else if (strcmp(name, "MAX_START_SPEED") == 0) {
     MAX_START_SPEED = atof(line);
   }
+  else if (strcmp(name, "CHANGE") == 0) {
+    change = atof(line);
+  }
 }
 
 
-void read_config() {
+int read_config() {
   FILE* config = fopen("config", "r");
-  if (config == NULL) {
-    perror("Could not read file");
-    exit(1);
-  }
+  ON_ERROR("Could not read config");
   size_t len;
   char* line = NULL;
   char* new = NULL;
@@ -51,9 +57,15 @@ void read_config() {
   read = getline(&new, &len, config);
 
   while (read > 0) {
+    ON_ERROR("Could not read line");
     line = new;
+    if ((line[0] == '\n') | (line[0] == '\0') | (line[0] == '#')) {
+      read = getline(&new, &len, config);
+      continue;
+    }
+
     char* name = strsep(&line, ":");
-    if (name == NULL) {
+    if ((name == NULL) | (line == NULL)) {
       read = getline(&new, &len, config);
       continue;
     }
@@ -65,4 +77,6 @@ void read_config() {
   }
   free(new);
   fclose(config);
+  ON_ERROR("Could not close config");
+  return 0;
 }

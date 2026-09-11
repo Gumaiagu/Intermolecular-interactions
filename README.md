@@ -4,18 +4,27 @@ This simulates the intermolecular interactions using the [Lennard Jones potentia
 
 ## Build
 
-Simple! Just run `make` on UNIX like systems.
+To compile for Linux, use `make lbuild`.
+
+To compile for Windows, use `make wbuild`.
+
+## Keybinds
+
+For now, the only keybinds are O and P, which respectively increase and decrease the temperature.
 
 ## Config file
 
 For now, there're only 6 fields:
 
-* WW -> Window Width (int)
-* WH -> Window Height (int)
-* GRAVITY -> Gravitational acceleration (float)
-* NUMBER_OF_BALLS -> Number of balls (int)
-* REPULTION -> Repultion force (float)
-* MAX_START_SPEED -> Maximum initial Speed (on each axis) (float)
+* WW -> Window Width. (int)
+* WH -> Window Height. (int)
+* GRAVITY -> Gravitational acceleration. (float)
+* NUMBER_OF_BALLS -> Number of balls. (int)
+* REPULTION -> Repultion force. (float)
+* MAX_START_SPEED -> Maximum initial Speed (on each axis). (float)
+* CHANGE -> Defines how much the speed changes when using the O and P keys, the fomula is `Velocity * (1 + CHANGE)` for P and `Velocity * (1 - CHANGE)` for O. (float)
+* FPS -> Defines the max frame rate of the program. (int)
+* THREADS -> Defines how many threads the program will use, if you don't define it, the program will use the number of threads in your system. (int)
 
 Now variable names can have many characters.
 
