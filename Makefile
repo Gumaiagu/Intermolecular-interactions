@@ -1,16 +1,23 @@
 LDFLAGS :=  -L lib/
-CFLAGS := -Wall -Wextra -std=gnu99
+CFLAGS := -Wall -Wextra -std=gnu99 -O3
 
-CC := gcc
-LDLIBS := -lraylib -lpthread -lm -lX11
+LCC := gcc
+LLDLIBS := -lraylib -lpthread -lm -lX11
 
 WCC := x86_64-w64-mingw32-gcc
 WLDLIBS := -lwraylib -lopengl32 -lgdi32 -lwinmm -lpthread -static
 
-lbuild: main.c
-	rm -f $@
-	gcc $(CFLAGS) $< -o $@ -I include/ $(LDFLAGS) $(LDLIBS)
+.PHONY: all clean wbuild lbuild
 
-wbuild: main.c
-	rm -f $@
+all: lbuild wbuild
+
+lbuild: ./src/main.c
+	$(LCC) $(CFLAGS) $< -o $@ -I include/ $(LDFLAGS) $(LLDLIBS)
+	strip $@
+
+wbuild: ./src/main.c
 	$(WCC) $(CFLAGS) $< -o $@ -I include/ $(LDFLAGS) $(WLDLIBS)
+
+clean:
+	@rm wbuild.exe
+	@rm lbuild
