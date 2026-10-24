@@ -1,6 +1,6 @@
 # Molecule simulation
 
-This simulates the intermolecular interactions using the [Lennard Jones potential](https://wikipedia.org/wiki/Lennard-Jones_potential).
+This simulates the intermolecular interactions using the [Lennard Jones potential](https://wikipedia.org/wiki/Lennard-Jones_potential) and the [Stefan–Boltzmann Law](https://wikipedia.org/wiki/Stefan%E2%80%93Boltzmann_law).
 
 ## Build
 
@@ -30,6 +30,8 @@ For now, there're only 6 fields:
 * MAX_COLOR -> Defines the speed that sets the color as red. (float)
 * COLOR_DEFINITION -> Defines if the color is based on the speed or the mass, 1 for the mass, 0 for the speed. (int)
 * MAX_MASS -> Maximum mass of each particle. (float)
+* BOLTZMANN_C -> The Boltzmann constant, must be very small or zero. (float)
+* RADIUS -> The ball's radius. (int)
 
 Now variable names can have many characters.
 

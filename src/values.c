@@ -4,12 +4,12 @@
 #include <raylib.h> // Defines Vector2
 #include <stddef.h> // Defines size_t
 
-#define ON_ERROR(message)                                                      \
-  do {                                                                         \
-    if (errno != 0) {                                                          \
-      perror(message);                                                         \
-      return errno;                                                            \
-    }                                                                          \
+#define ON_ERROR(message)   \
+  do {                      \
+    if (errno != 0) {       \
+      perror(message);      \
+      return errno;         \
+    }                       \
   } while (0)
 
 int WW = 800;
@@ -38,6 +38,8 @@ double MAX_COLOR = 1;
 double MAX_MASS = 1;
 
 int COLOR_DEFINITION = 1;
+
+double BOLTZMANN_C = 0;
 
 size_t NUMBER_OF_BALLS = 100;
 struct Ball *balls;

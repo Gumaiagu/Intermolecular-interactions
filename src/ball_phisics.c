@@ -5,9 +5,10 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#define FOURTH(x) x*x*x*x
 
 double formula(double d, double mass) {
-    return delta*12*REPULTION*(2*twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/(d*mass);
+    return delta*24*REPULTION*(2*twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/(d*mass);
 }
 
 
@@ -53,9 +54,17 @@ void* ball_phisics(void* param) {
   }
 
   for (size_t i=0; i<balls_over_threads; i++) {
-    list[i].vel.y += delta*G/2;
+    list[i].vel.y += delta*G;
     intermolecular_forces(&(list[i]));
     border_collision(&(list[i]));
+    if (list[i].vel.x < 0)
+      list[i].vel.x += delta*BOLTZMANN_C*FOURTH(list[i].vel.x);
+    else
+      list[i].vel.x -= delta*BOLTZMANN_C*FOURTH(list[i].vel.x);
+    if (list[i].vel.y < 0)
+      list[i].vel.y += delta*BOLTZMANN_C*FOURTH(list[i].vel.y);
+    else
+      list[i].vel.y -= delta*BOLTZMANN_C*FOURTH(list[i].vel.y);
 
     list[i].pos.x += delta*list[i].vel.x;
     list[i].pos.y += delta*list[i].vel.y;

@@ -56,11 +56,17 @@ void check_value(const char *__restrict name, const char *__restrict line) {
   else if (strcmp(name, "MAX_MASS") == 0) {
    MAX_MASS = atof(line);
   }
+  else if (strcmp(name, "BOLTZMANN_C") == 0) {
+    BOLTZMANN_C = atof(line);
+  }
+  else if (strcmp(name, "RADIUS") == 0) {
+   RADIUS = atoi(line);
+  }
 }
 
 
-int read_config() {
-  FILE* config = fopen("config", "r");
+int read_config(char* filename) {
+  FILE* config = fopen(filename, "r");
   ON_ERROR("Could not read config");
   size_t len;
   char* line = NULL;
