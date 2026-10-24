@@ -40,3 +40,15 @@ The config format is like CSS code style:
 WW: {random number}
 # This is a comment
 ```
+## References
+
+Research references:
+
+* https://wikipedia.org/wiki/Lennard-Jones_potential
+* https://wikipedia.org/wiki/Stefan%E2%80%93Boltzmann_law
+
+Tools used to code this project:
+
+* GCC;
+* MinGW;
+* Raylib v6.0. Its code is included within the project, as this makes it easier to compile the project using MinGW.
