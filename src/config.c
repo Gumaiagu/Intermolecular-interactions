@@ -32,8 +32,8 @@ void check_value(const char *__restrict name, const char *__restrict line) {
   else if (strcmp(name, "NUMBER_OF_BALLS") == 0) {
     NUMBER_OF_BALLS = atoi(line);
   }
-  else if (strcmp(name, "REPULTION") == 0) {
-    REPULTION = atof(line);
+  else if (strcmp(name, "REPULSION") == 0) {
+    REPULSION = atof(line);
   }
   else if (strcmp(name, "MAX_START_SPEED") == 0) {
     MAX_START_SPEED = atof(line);

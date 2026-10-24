@@ -27,7 +27,7 @@ float MAX_START_SPEED = 50;
 
 float G = 0;
 
-float REPULTION = 1;
+float REPULSION = 1;
 
 size_t MAX_FPS = 180;
 

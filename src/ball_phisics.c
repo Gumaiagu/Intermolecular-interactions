@@ -8,7 +8,7 @@
 #define FOURTH(x) x*x*x*x
 
 double formula(double d, double mass) {
-    return delta*24*REPULTION*(2*twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/(d*mass);
+    return delta*24*REPULSION*(2*twelve(2*RADIUS/d) - sixth(2*RADIUS/d))/(d*mass);
 }
 
 
