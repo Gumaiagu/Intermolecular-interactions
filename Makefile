@@ -19,7 +19,7 @@ lbuild: ./src/main.c
 	strip $@
 
 wbuild: ./src/main.c
-	$(WCC) $(CFLAGS) $< -o $@ -I include/ $(LDFLAGS) $(WLDLIBS)
+	$(WCC) -s $(CFLAGS) $< -o $@ -I include/ $(LDFLAGS) $(WLDLIBS)
 
 clean:
 	@rm -f wbuild.exe
