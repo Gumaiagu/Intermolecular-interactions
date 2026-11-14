@@ -1,5 +1,5 @@
 LDFLAGS :=  -L lib/
-CFLAGS := -Wall -Wextra -std=gnu99 -O3
+CFLAGS := -Wall -Wextra -std=gnu99 -O3 -s
 
 LCC := gcc
 LLDLIBS := -lraylib -lpthread -lm -lX11
@@ -16,7 +16,6 @@ run: lbuild
 
 lbuild: ./src/main.c
 	$(LCC) $(CFLAGS) $< -o $@ -I include/ $(LDFLAGS) $(LLDLIBS)
-	strip $@
 
 wbuild: ./src/main.c
 	$(WCC) -s $(CFLAGS) $< -o $@ -I include/ $(LDFLAGS) $(WLDLIBS)
