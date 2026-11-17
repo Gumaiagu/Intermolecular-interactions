@@ -52,4 +52,4 @@ Tools used to code this project:
 
 * GCC;
 * MinGW;
-* Raylib v6.0. Its code is included within the project, as this makes it easier to compile the project using MinGW.
+* Raylib v6.2.
